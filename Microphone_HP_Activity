@@ -1,0 +1,85 @@
+package com.example.testyourandroidsmartphone;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
+
+public class Microphone_HP_Activity extends AppCompatActivity {
+
+    Button START;
+    TextView Amplitude;
+    MyRecording recording1;
+    public static final int request_code = 1000;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_microphone_hp);
+
+            START = findViewById(R.id.button13);
+            Amplitude = findViewById(R.id.Amplitude);
+
+        if (checkPermissionFromDevice()){try{
+            recording1 = new MyRecording(this);} catch (IOException e) {
+            e.printStackTrace();
+        }}
+        else {requestPermissionFromDevice();}
+
+            START.setOnClickListener(new  View.OnClickListener() {
+
+                public void onClick (View view){
+                   try {
+                     recording1.Recording();
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                  }
+
+                }});
+
+
+   }
+
+   public  void UpdateAmplitude(int amplitude)
+   {
+       Amplitude.setText("Amplitude: " + amplitude);
+   }
+
+    private void requestPermissionFromDevice() {
+        ActivityCompat.requestPermissions(this,new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.RECORD_AUDIO},
+                request_code);
+    }
+
+    private boolean checkPermissionFromDevice() {
+        int storage_permission= ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int recorder_permssion=ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO);
+        return storage_permission == PackageManager.PERMISSION_GRANTED && recorder_permssion == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case request_code:
+            {
+                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ){
+                    Toast.makeText(getApplicationContext(),"permission granted...",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"permission denied...",Toast.LENGTH_SHORT).show();
+                }
+            }
+            break;
+        }
+    }
+    }
