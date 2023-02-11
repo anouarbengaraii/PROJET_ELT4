@@ -1,0 +1,62 @@
+package com.example.testyourandroidsmartphone;
+
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.Camera;
+import android.hardware.camera2.CameraManager;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+public class Check_Flash_Activity extends AppCompatActivity {
+    Button start;
+    CameraManager cameraManager;
+    int i=0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_check_flash);
+        start=findViewById(R.id.sf);
+        start.setOnClickListener(new  View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) //cette fonction renvoie true si le flash est detecte et false sinon
+                {
+                    //turn here the camera flash 5 times
+                    try {
+                        for (int i=0 ; i<5; i++) {
+
+                            cameraManager.setTorchMode("0", true); // 0 est l'id de la cam derriere
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+
+                                e.printStackTrace();
+                            }
+                            cameraManager.setTorchMode("0", false);
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(Check_Flash_Activity.this," Le smartphone n'a pas de Flash",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+            };
+}
