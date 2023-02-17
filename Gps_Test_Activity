@@ -1,0 +1,100 @@
+package com.example.testyourandroidsmartphone;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.android.gms.location.LocationServices;
+
+public class Gps_Test_Activity extends AppCompatActivity {
+    private static final int REQUEST_LOCATION = 1;
+    Location location;
+    LocationManager lm;
+    TextView Latitude, Longitude, Speed, Altitude, Bearing, Accuracy;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_gps_test);
+        Latitude = findViewById(R.id.latitude);
+        Longitude = findViewById(R.id.longitude);
+        Speed = findViewById(R.id.Speed);
+        Altitude = findViewById(R.id.altitude);
+        Bearing = findViewById(R.id.bearing);
+        Accuracy = findViewById(R.id.accuracy);
+        ActivityCompat.requestPermissions(this, new String[]
+                {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+
+
+
+
+                lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(Gps_Test_Activity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(Gps_Test_Activity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    return;
+                }
+
+                    location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                     final double[] a = {location.getLatitude()};
+                     final double[] b = {location.getLongitude()};
+                     final double[] c = {location.getSpeed()};
+                     final double[] d = {location.getAltitude()};
+                     final double[] z = {location.getBearing()};
+                     final double[] f = {location.getAccuracy()};
+                     Latitude.setText("Latitude : " + a[0]);
+                     Longitude.setText("Longitude :" + b[0]);
+                     Speed.setText("Speed m/s : " + c[0]);
+                     Altitude.setText("Altitude : " + d[0]);
+                      Bearing.setText("Bearing : " + z[0]);
+                      Accuracy.setText("Accuracy : " + f[0]);
+                     final LocationListener locationListener = new LocationListener() {
+                         public void onLocationChanged(Location location) {
+                             b[0] = location.getLongitude();
+                             a[0] = location.getLatitude();
+                             c[0] = location.getSpeed();
+                             d[0] = location.getAltitude();
+                             z[0] = location.getBearing();
+                             f[0] = location.getAccuracy();
+                             Latitude.setText("Latitude : " + a[0]);
+                             Longitude.setText("Longitude : " + b[0]);
+                             Speed.setText("Speed m/s : " + c[0]);
+                             Altitude.setText("Altitude : " + d[0]);
+                             Bearing.setText("Bearing : " + z[0]);
+                             Accuracy.setText("Accuracy : " + f[0]);
+                             try {
+                                 Thread.sleep(500);
+                             } catch (InterruptedException e) {
+
+                                 e.printStackTrace();
+                             }
+                         }
+                     };
+
+                        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, locationListener);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    };
+
+}
